@@ -4,64 +4,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Upload, X } from "lucide-react";
 import Image from "next/image";
-import { DragEvent, useRef, useState } from "react";
+import { useInputFile } from "../hooks/useInputFile";
 
 interface InputFileProps {
   onFileSelect: (file: File | null, preview: string) => void;
 }
 
 export function InputFile({ onFileSelect }: InputFileProps) {
-  const [preview, setPreview] = useState<string>("");
-  const [isDragging, setIsDragging] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleFile = (file: File | null) => {
-    if (!file) {
-      setPreview("");
-      onFileSelect(null, "");
-      return;
-    }
-
-    if (file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        setPreview(result);
-        onFileSelect(file, result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    handleFile(file);
-  };
-
-  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files?.[0] || null;
-    handleFile(file);
-  };
-
-  const clearImage = () => {
-    setPreview("");
-    onFileSelect(null, "");
-    if (inputRef.current) {
-      inputRef.current.value = "";
-    }
-  };
+  const {
+    preview,
+    isDragging,
+    inputRef,
+    handleChange,
+    handleDragOver,
+    handleDragLeave,
+    handleDrop,
+    clearImage,
+  } = useInputFile(onFileSelect);
 
   return (
     <div className="grid w-full items-center gap-3">

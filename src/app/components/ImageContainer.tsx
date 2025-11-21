@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 
 import { Trash } from "lucide-react";
-import { ImageData } from "../page";
+import { ImageData } from "../hooks/useImage";
 
 interface ImageContainerProps {
   images: ImageData[];

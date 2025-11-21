@@ -9,56 +9,25 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useState } from "react";
-import { ImageData } from "../page";
 import { InputFile } from "./InputFile";
 
 interface AddImageModalProps {
-  images: ImageData[];
-  setImages: (images: ImageData[]) => void;
   open: boolean;
   setOpen: (open: boolean) => void;
+  handleFileSelect: (file: File | null, preview: string) => void;
+  handleClose: () => void;
+  handleAddImage: () => void;
+  previewUrl: string;
 }
 
 export default function AddImageModal({
-  images,
-  setImages,
   open,
   setOpen,
+  handleFileSelect,
+  handleClose,
+  handleAddImage,
+  previewUrl,
 }: AddImageModalProps) {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string>("");
-
-  const handleFileSelect = (file: File | null, preview: string) => {
-    setSelectedFile(file);
-    setPreviewUrl(preview);
-  };
-
-  const handleAddImage = () => {
-    if (!previewUrl) return;
-
-    const newImage: ImageData = {
-      id: selectedFile?.name + Date.now().toString(),
-      base64: previewUrl,
-      timestamp: Date.now(),
-    };
-
-    const newImages = [...images, newImage];
-    setImages(newImages);
-
-    window.localStorage.setItem("images", JSON.stringify(newImages));
-
-    setSelectedFile(null);
-    setPreviewUrl("");
-    setOpen(false);
-  };
-
-  const handleClose = () => {
-    setSelectedFile(null);
-    setPreviewUrl("");
-    setOpen(false);
-  };
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[500px]">
