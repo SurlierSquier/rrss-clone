@@ -6,14 +6,21 @@ interface StoryItemProps {
 }
 
 export default function StoryItem({ image }: StoryItemProps) {
+  const handleOpenImageModal = (id: string) => {
+    console.log(id);
+  };
+
   return (
     <>
-      <div className="w-16 h-16 rounded-full border border-black bg-card relative m-2">
+      <div
+        className="min-w-16 min-h-16 rounded-full border border-black bg-card relative m-2 cursor-pointer"
+        onClick={() => handleOpenImageModal(image.id)}
+      >
         <Image
           src={image.base64}
           alt="Story"
           fill
-          className="rounded-full object-cover object-center"
+          className="rounded-full object-cover object-center blur-[2px]"
         />
       </div>
     </>

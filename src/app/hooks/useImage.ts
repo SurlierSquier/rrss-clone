@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export interface ImageData {
   id: string;
@@ -11,20 +11,34 @@ export const useImage = () => {
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [openModal, setOpenModal] = useState(false);
 
-  const [images, setImages] = useState<ImageData[]>(() => {
-    if (typeof window === "undefined") return [];
+  const [images, setImages] = useState<ImageData[]>([]);
 
-    const stored = window.localStorage.getItem("images");
-    if (stored) {
-      try {
-        return JSON.parse(stored);
-      } catch (error) {
-        console.error("Error loading images:", error);
-        return [];
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = window.localStorage.getItem("images");
+      if (stored) {
+        try {
+          const parsedImages = JSON.parse(stored);
+
+          const now = Date.now();
+          const validImages = parsedImages.filter((image: ImageData) => {
+            const diff = now - image.timestamp;
+            return diff < 24 * 60 * 60 * 1000;
+          });
+
+          setTimeout(() => {
+            setImages(validImages);
+          }, 0);
+
+          if (parsedImages.length !== validImages.length) {
+            window.localStorage.setItem("images", JSON.stringify(validImages));
+          }
+        } catch (error) {
+          console.error("Error loading images:", error);
+        }
       }
     }
-    return [];
-  });
+  }, []);
 
   const handleFileSelect = (file: File | null, preview: string) => {
     setSelectedFile(file);
